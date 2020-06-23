@@ -93,7 +93,7 @@ public class TreeUtil {
      */
     public static BinaryTreeNode<Integer> delete(BinaryTreeNode<Integer> rootNode, int value) {
         //判断是否删除的节点为根节点
-        if (rootNode == null && rootNode.value == value) {
+        if (rootNode != null && rootNode.value == value) {
             rootNode = null;
             return rootNode;
         }
@@ -163,7 +163,7 @@ public class TreeUtil {
 
     /**
      * 二叉树的深度
-     * 从根节点到叶子节点依次进过的节点形成树的一条路径，最长路径的长度为树的深度。
+     * 从根节点到叶子节点依次经过的节点形成树的一条路径，最长路径的长度为树的深度。
      */
     public static int depthOfTree(BinaryTreeNode<Integer> root) {
         if (root == null) {
@@ -237,5 +237,48 @@ public class TreeUtil {
             return 1;
         }
         return numberOfLeafsInTree(rootNode.leftNode)+numberOfLeafsInTree(rootNode.rightNode);
+    }
+
+    /**
+     * 二叉树的最大距离（直径）
+     * 二叉树中任意两个节点都有且仅有一条路径，这个路径的长度叫这两个节点的距离。二叉树中所有节点之间的距离的最大值就是二叉树的直径
+     * @param rootNode 根节点
+     * @return 直径
+     */
+    public static int maxDistanceOfTree(BinaryTreeNode<Integer> rootNode) {
+        if (rootNode==null){
+            return 0;
+        }
+        //节点在左右子树
+        int leftAndRight = depthOfTree(rootNode.leftNode) + depthOfTree(rootNode.rightNode);
+        //节点只存在左子树
+        int left = maxDistanceOfTree(rootNode.leftNode);
+        //节点只在右子树
+        int right = maxDistanceOfTree(rootNode.rightNode);
+        return Math.max(leftAndRight,Math.max(left,right));
+    }
+
+    /**
+     * 二叉树的最大距离（直径）
+     * @param rootNode 根节点
+     * @return 直径
+     */
+    public static int maxDistanceOfTree2(BinaryTreeNode<Integer> rootNode){
+        if (rootNode==null){
+            return 0;
+        }
+        return getTreeNodeProperty(rootNode).distance;
+    }
+
+    private static TreeNodeProperty getTreeNodeProperty(BinaryTreeNode<Integer> node){
+        if (node==null){
+            return new TreeNodeProperty();
+        }
+        TreeNodeProperty leftNodeProperty = getTreeNodeProperty(node.leftNode);
+        TreeNodeProperty rightNodeProperty = getTreeNodeProperty(node.rightNode);
+        TreeNodeProperty p = new TreeNodeProperty();
+        p.depth = Math.max(leftNodeProperty.depth,rightNodeProperty.depth) + 1;
+        p.distance = Math.max(Math.max(leftNodeProperty.distance,rightNodeProperty.distance),leftNodeProperty.depth + rightNodeProperty.depth);
+        return p;
     }
 }
