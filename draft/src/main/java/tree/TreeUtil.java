@@ -1,7 +1,9 @@
 package tree;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+import java.util.Stack;
 
 /**
  * @author zwj
@@ -9,7 +11,7 @@ import java.util.Queue;
  */
 public class TreeUtil {
     /**
-     * 创建二叉树
+     * 创建二叉搜索树
      */
     public static BinaryTreeNode<Integer> createTreeWithValues(int[] values) {
         BinaryTreeNode<Integer> root = null;
@@ -37,6 +39,7 @@ public class TreeUtil {
         }
         return treeNode;
     }
+
 
     public static void inOrderTraverseTree(BinaryTreeNode<Integer> rootNode) {
         if (rootNode != null) {
@@ -280,5 +283,40 @@ public class TreeUtil {
         p.depth = Math.max(leftNodeProperty.depth,rightNodeProperty.depth) + 1;
         p.distance = Math.max(Math.max(leftNodeProperty.distance,rightNodeProperty.distance),leftNodeProperty.depth + rightNodeProperty.depth);
         return p;
+    }
+
+    /**
+     * 二叉树中某个节点到根节点的路径
+     * @param rootNode 根节点
+     * @param treeNode 节点
+     * @return 路径队列
+     */
+    public static Stack<BinaryTreeNode<Integer>> pathOfTreeNode(BinaryTreeNode<Integer> rootNode, int treeNode) {
+        Stack<BinaryTreeNode<Integer>> pathList = new Stack<>();
+        findRootPath(rootNode,treeNode,pathList);
+        return pathList;
+    }
+
+    private static boolean findRootPath(BinaryTreeNode<Integer> rootNode, int treeNode, Stack<BinaryTreeNode<Integer>> pathList){
+        if (rootNode==null){
+            return false;
+        }
+        if (rootNode.value == treeNode){
+            pathList.add(rootNode);
+            return true;
+        }
+        //路过的压栈
+        pathList.add(rootNode);
+        //找左子树
+        boolean find = findRootPath(rootNode.leftNode, treeNode, pathList);
+        //找不到找右子树
+        if (!find){
+            find = findRootPath(rootNode.rightNode, treeNode, pathList);
+        }
+        //还找不到就出栈
+        if (!find){
+            pathList.pop();
+        }
+        return find;
     }
 }
